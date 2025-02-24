@@ -103,7 +103,7 @@ download_from_youtube.py
   - Audio files are places in genreMode/unprocessed/?
   - ? represents a genre header, mp3 files are sorted while downloading into labeled folders
   - Note that this function may take up to 7GB of disk space.
-  - This function takes a while to run, close to an hour and a half on my machine
+  - This script takes a while to run, close to an hour and a half on my machine
 
 ## Notes
  
