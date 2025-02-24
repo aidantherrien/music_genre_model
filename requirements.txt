@@ -1,0 +1,8 @@
+tensorflow
+numpy
+psycopg2
+musicbrainzngs
+yt-dlp
+librosa
+scikit-learn
+pandas
