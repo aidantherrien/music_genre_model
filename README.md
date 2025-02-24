@@ -105,7 +105,14 @@ download_from_youtube.py
   - Note that this function may take up to 7GB of disk space.
   - This script takes a while to run, close to an hour and a half on my machine
 
+extract_audio.py
+  - This is where you get the .npz used by train_and_save_model.py
+  - You must go down to the main block at the bottom, and change data_path to the currentData/unprocessed folder.
+  - You may also change where the .npz folder winds up, I placed it in currentData/processed.
+
 ## Notes
+I have a bunch of old scripts (nicely placed in the outdated scripts directory). Those were used while I was initially
+tooling around and testing some of this code. Feel free to use any of it for your own troubleshooting.
  
 
  
