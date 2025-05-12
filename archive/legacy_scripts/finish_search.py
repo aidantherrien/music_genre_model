@@ -6,10 +6,10 @@ import time
 import random
 
 # === CONFIGURATION ===
-API_KEY = r"c59114fdaa166a35952e10916ea1e171"  # Replace with your API key
+API_KEY = r"YOUR_LASTFM_API_KEY"  # Replace with your API key
 LASTFM_API_URL = r"http://ws.audioscrobbler.com/2.0/"
 ARTIST_JSON_PATH = r"data\artists\artists_by_genre.json"  # Path to your artist JSON file
-OUTPUT_CSV_PATH = r"data\metadata\dataset_meta_v3.2"  # Path where you want the CSV output
+OUTPUT_CSV_PATH = r"data\metadata\dataset_meta_vX.Y"  # Path where you want the CSV output
 X_SONGS_PER_ARTIST = 5
 Y_TOP_SONG_POOL = 20
 
