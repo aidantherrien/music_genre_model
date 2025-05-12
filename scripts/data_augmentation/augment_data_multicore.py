@@ -7,14 +7,14 @@ from pydub import AudioSegment
 
 
 # ==============================================================================
-# MULTICORE AUDIO AUGMENTATION SCRIPT
+# MULTICORE AUDIO AUGMENTATION SCRIPT (augment_data_multicore.py)
 # ==============================================================================
 # This script applies several audio augmentation techniques to a collection of 
 # audio files in a given directory. The augmented files are saved in an output 
 # directory, organized by genre.
 #
 # This script is functionally the same as augment_data.py, except it allows for
-# multicore processing to get the job dont faster.
+# multicore processing to get the job done faster.
 #
 
 

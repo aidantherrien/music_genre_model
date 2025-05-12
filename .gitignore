@@ -3,6 +3,7 @@ venv/
 tfenv/
 
 # Ignore audio/raw data
+data
 *.mp3
 *.wav
 

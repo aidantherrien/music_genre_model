@@ -6,7 +6,7 @@ from pydub import AudioSegment
 
 
 # ============================================================
-# MUSIC DATA AUGMENTATION SCRIPT
+# MUSIC DATA AUGMENTATION SCRIPT (augment_data.py)
 # ============================================================
 # This script performs audio augmentation on a set of music 
 # files to artificially increase the size of the dataset for 

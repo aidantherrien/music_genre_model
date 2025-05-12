@@ -5,6 +5,27 @@ import subprocess
 from pathlib import Path
 from yt_dlp import YoutubeDL
 
+# === Song Clip Downloader and Processor (download_from_youtube.py) ===
+# This script processes a CSV file containing metadata for songs (artist, title, genre),
+# searches YouTube for each song, and downloads audio clips based on specified durations.
+# The clips are then saved in a genre-specific directory, and the CSV is updated with 
+# the file paths of the downloaded clips.
+#
+# === Constants ===
+# CSV_PATH: Path to the CSV file with song metadata
+# RAW_AUDIO_DIR: Directory to store raw audio files
+# MIN_CLIP_LENGTH: Minimum length for each audio clip (in seconds)
+# MAX_CLIP_LENGTH: Maximum length for each audio clip (in seconds)
+# CLIPS_PER_SONG: Number of clips to extract from each song
+# MAX_SONG_DURATION: Maximum allowed song duration for processing (fallback value)
+#
+# === Functions ===
+# - get_evenly_spaced_clips: Generates evenly spaced audio clips from the full song duration
+# - sanitize_filename: Sanitizes the song title to create a valid filename
+# - download_clips: Searches for the song on YouTube, downloads the audio, splits it into clips, and returns the file paths
+# - process_csv: Reads the CSV file, processes each song, downloads clips, and updates the CSV with file paths
+
+
 # === Constants ===
 CSV_PATH = r"data\metadata\dataset_meta_v3.2.csv"
 RAW_AUDIO_DIR = r"data\raw"
@@ -74,7 +95,7 @@ def download_clips(artist, title, genre, clips):
 
         clips_data = get_evenly_spaced_clips(duration, MIN_CLIP_LENGTH, MAX_CLIP_LENGTH, CLIPS_PER_SONG)
         if not clips_data:
-            print(f"⚠️ Skipping: {artist} - {title} (not enough duration)")
+            print(f"Skipping: {artist} - {title} (not enough duration)")
             return None
 
         try:

@@ -1,123 +1,99 @@
-# music_genre_model
-A Python-based AI model that classifies music genres by analyzing audio features. It uses MusicBrainz API to pull songs across
-a variety of genres. It stores genre, title, and artist information in a PostgreSQL database for both data collection purposes,
-and to prevent duplicate songs from entering the database. Audio files are downloaded from Youtube.
+## music_genre_model
+A Python-based AI model that classifies music genres by analyzing audio features. It uses the Last.fm API to pull songs across a variety of genres. It stores genre, title, and artist information in a CSV file for data collection purposes. Audio features such as MFCC, Chroma, and Spectral Contrast are extracted from the audio files and used for model training. Songs are downloaded from YouTube.
 
 ## Table of Contents
 - [Features](#features)
 - [Installation](#installation)
 - [Setup](#setup)
-- [Database](#database)
+- [Data](#data)
 - [Scripts](#scripts)
+- [Notebooks](#notebooks)
 - [Notes](#notes)
 
-## Features
-This model allows for the simple categorization of music. Feed the model a folder of songs, and it will determine what genre that song belongs to. I wrote this project to get my feet wet working with audio, and digital signal processing, as well as learning how to create and train my own AI model.
+# Features
+This model classifies music into genres based on extracted audio features. The main purpose of this project is to classify songs using deep learning models, while experimenting with audio processing techniques like MFCC and Chroma.
 
 Core Functionalities:
-  - Creating an AI model using Tensorflow.
-  - Creation/collection of training data using MusicBrainz API, Youtube, Librosa, and sklearn
-  - Storing song information, including genre, artist, and song title using PostgreSQL
-  - Preventing duplicate songs from entering training using PostgreSQL
-  - Training and saving the AI model in a .keras format for easy deployment using Tensorflow
+  - Creating a genre classification AI model using TensorFlow with a CNN-LSTM hybrid architecture.
+  - Collection of training data using the Last.fm API, YouTube, and audio feature extraction tools like Librosa and sklearn.
+  - Data augmentation in order to increase size of data set artificially.
+  - Storing metadata (genre, title, artist) in CSV format for easy access and training.
+  - Extracting audio features (MFCC, Chroma, Spectral Contrast) from MP3 files and storing them in NPZ format.
+  - Training and saving the AI model in a .keras format for easy deployment with TensorFlow.
 
-Future direction of the project
-  - To take this project further, I would likely add more genres
-  - automatic expansion of genre headers is definitely possible, and likely necessary for a truly useful model
-  - MusicBrainz API is hardly being used to its full capacity currently, it can produce very specific genre information.
+Future direction of the project:
+  - Add more data, struggling to generalize
+  - Consider that some genres are too similar, leading to overlap
+  - Potential (RNN) Recursive Neural Network implementation. 
+  - Utilize the full capacity of the Last.fm API to enhance metadata retrieval and genre definitions.
+  - Use PostgreSQL to manage a larger database of songs over time.
 
 ## Installation
-This project has a few prerequesites.
+This project has a few prerequisites:
   - Python v3.11
-  - PostgreSQL v16
-  - FFmpeg (yt_dlp needs it)
-  - pip
+  - FFmpeg (required for YouTube downloads)
 
 Installing FFmpeg:
-For windows users, download from the FFmpeg website and add it to your system path.
-Linux/MacOS users may use one of the following commands
-- sudo apt install ffmpeg  # Debian/Ubuntu
-- brew install ffmpeg  # macOS
+  - For Windows users, download from the FFmpeg website and add it to your system path.
+  - Linux/MacOS users may use one of the following commands:
+
+Commands:
+  - sudo apt install ffmpeg # Debian/Ubuntu
+  - brew install ffmpeg # macOS
 
 Cloning Repository:
-git clone https://github.com/aidantherrien/music_genre_model/tree/main
-cd https://github.com/aidantherrien/music_genre_model/tree/main
+  - git clone https://github.com/aidantherrien/music_genre_model.git
+  - cd music_genre_model
 
-Other Dependencies may be found in the requirements.txt file in the repository. Simply download, and run the following pip
-command:
-pip install -r requirements.txt
+Installing Dependencies:
+  - Other dependencies are listed in the requirements.txt file. To install them, run the following command:
+  - pip install -r requirements.txt
 
 ## Setup
-Follow the followings steps before first using the program.
-  - Start your PostgreSQL server (I used PGAdmin v4)
-  - Add a user to your database, set a password (this will be how your program accesses your database)
-  - Update login credentials in each script that uses it (Will be discussed further in scripts section)
+Follow the following steps before first using the program:
 
-## Database
+Create Directories:
+data/: Folder to store audio files, CSV, and NPZ files.
+current_data/: Temporary storage for downloaded MP3 files.
+Configure API Keys: Place your API keys for the Last.fm API in the config.py file or set them as environment variables.
+Update .gitignore: Ensure sensitive files and large files like audio data are ignored (e.g., data/, *.mp3, etc.).
+Adjust config.py: Set paths and model parameters, including mappings for genre-to-neuron.
 
-Here is the layout of the songs table:
-### `songs` Table
-| Column       | Type        | Description                       |
-|--------------|-------------|-----------------------------------|
-| `song_id`    | SERIAL (PK) | Unique song identifier            |
-| `title`      | TEXT        | Song title                        |
-| `artist`     | TEXT        | Artist name                       |
-| `genre`      | TEXT        | Genre label from MusicBrainzAPI   |
-| `trained`    | BOOLEAN     | True/False has the model used it  |
+## Data
+Audio Data: Songs are downloaded from YouTube using metadata (title, artist, genre) retrieved from the Last.fm API.
+Metadata: The metadata is stored in a CSV file with columns such as title, artist, album, year, genre, and recording_mbid.
+Audio Features: Audio features (MFCC, Chroma, Spectral Contrast) are extracted using Librosa and stored in NPZ format for model training.
 
---- 
-
-Each pass by MusicBrainzAPI will add 800 songs to the SQL table, 100 songs per genre. This is also where duplicate songs
-are prevented from entering the table using "ON CONFLICT DO NOTHING".
-
-Here is the create table query.
-CREATE TABLE songs (
-    song_id SERIAL PRIMARY KEY,
-    title TEXT NOT NULL,
-    artist TEXT NOT NULL,
-    genre TEXT,
-    trained BOOLEAN DEFAULT FALSE
-); 
+Data Pipeline:
+- Data Collection: Downloads music and stores them in genre-specific folders within current_data/.
+- Data Augmentation: Various audio augmentation techniques are used, including pitch shifting, tempo shifting, noise, and more to - increase dataset size.
+- Feature Extraction: Extracts audio features for each song, normalizes them, and saves them in both CSV and NPZ formats.
+- Training Data: Preprocessed feature vectors (flattened) are used for training the genre classification model.
 
 ## Scripts
-create_new_model.py
-  - Creates a new genre classification model using Tensorflow
-  - Input your own desired filename at the top
-  - Adjust layers of each model here
-  - Models are save to the "Models" directory
+- get_songs.py: Automates the process of collecting metadata from the Last.fm API and saving metadata to CSV
+- download_from_youtube.py: Moves through metadata CSV and downloads 2 random 30 second clips of each song (adjustable values)
+- augment_data.py: Performs data augmentation of the dataset, and stores the results in a seperate folder, parameters of augmentation can be edited.
+- encode_vectors.py: Extracts audio features (MFCC, Chroma, Spectral Contrast, etc) from MP3 files and saves them to CSV and NPZ formats as flattened feature vectors for training.
+- train_h5.py: Trains the CNN-LSTM hybrid model on the extracted features.
+- train_keras.py: Trains the old MLP models on the extracted features.
 
-train_and_save_model.py
-  - Trains your model using the preprocessed data in the relevant .npz file.
-  - You must input the path to the model you wish to train
-  - You must input the path to the .npz data you wish to use in training
-  - Script will only save the new model if the accuracy has improved over the previous version.
+## Notebooks
+Several Jupyter Notebooks are included in the repository to assist with dataset exploration, model testing, and prediction.
 
-musicbrainz_collection.py
-  - Pulls songs and genre information from the MusicBrainzAPI database.
-  - Data is placed into the songs table in the SQL database
-  - You must input your own SQL login information at the top
-  - You may input your own MusicBrainzAPI contact information in the set_useragent() function at line 15
+These notebooks are ideal for:
+  - Visualizing feature distributions (e.g., MFCC, Chroma, Spectral Contrast) to better understand the dataset.
+  - Loading and testing the trained model on new songs for real-time genre prediction.
+  - Interpreting prediction confidence using bar charts and softmax outputs.
+  - Inspecting raw or processed data to debug issues in preprocessing or model training.
 
-download_from_youtube.py
-  - Pulls song names from the PostgreSQL table, searches for them on Youtube, and download the audio file
-  - Audio files are places in genreMode/unprocessed/?
-  - ? represents a genre header, mp3 files are sorted while downloading into labeled folders
-  - Note that this function may take up to 7GB of disk space.
-  - This script takes a while to run, close to an hour and a half on my machine
+Example Notebooks:
+  - predict_genre.ipynb: Loads an MP3 file, extracts features, runs the trained model, and visualizes genre prediction confidence.
+  - analyze_dataset.ipynb: Displays class balance, feature histograms, and PCA/t-SNE visualizations of the feature space.
 
-extract_audio.py
-  - This is where you get the .npz used by train_and_save_model.py
-  - You must go down to the main block at the bottom, and change data_path to the currentData/unprocessed folder.
-  - You may also change where the .npz folder winds up, I placed it in currentData/processed.
+These notebooks are great for experimentation and visualization, especially when iterating on model performance or tuning preprocessing steps.
 
 ## Notes
-I have a bunch of old scripts (nicely placed in the outdated scripts directory). Those were used while I was initially
-tooling around and testing some of this code. Feel free to use any of it for your own troubleshooting.
- 
+Model Architecture: A hybrid CNN-LSTM model is used for genre classification. The CNN layers handle feature extraction from raw input data, and the LSTM layers capture temporal patterns in the audio features.
 
- 
-
-
-
-
-
+## Model Evaluation: The model's performance is evaluated using classification metrics like accuracy, precision, recall, and F1-score.
