@@ -9,7 +9,7 @@ SONGS_PER_GENRE = 100
 CSV_PATH = r'/csvs/dataset_meta_v1.csv'
 
 HEADERS = {
-    'User-Agent': 'genremodel/2.1 aidanmtherrien@gmail.com'
+    'User-Agent': '(projectname)/X.Y (Your Email Address)'
 }
 
 os.makedirs(os.path.dirname(CSV_PATH), exist_ok=True)
