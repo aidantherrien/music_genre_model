@@ -5,7 +5,7 @@ import csv
 import time
 
 # Setup the MusicBrainz user agent
-musicbrainzngs.set_useragent("MusicGenreCollector", "3.0", "aidanmtherrien@gmail.com")
+musicbrainzngs.set_useragent("PROJECT_TITLE", "X.Y", "EMAIL")
 
 # Constants
 TOTAL_SONGS_PER_GENRE = 50  # Total number of songs per genre
@@ -15,7 +15,7 @@ SONGS_PER_ARTIST = 2  # Number of songs per artist
 RETRIES = 3  # Number of retry attempts for failed queries
 
 # CSV Output file
-OUTPUT_CSV = r"C:\Users\aidan\PycharmProjects\pythonProject19\csvs\dataset_meta_v2.csv"
+OUTPUT_CSV = r"OUTPUT\CSV\DIRECTORY"
 
 # Manually input the list of artists per genre
 artists_by_genre = {
