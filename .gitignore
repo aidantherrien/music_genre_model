@@ -1,0 +1,13 @@
+# Ignore virtual environments
+venv/
+tfenv/
+
+# Ignore audio/raw data
+data
+*.mp3
+*.wav
+
+# Ignore other large files
+*.zip
+*.npy
+*.npz

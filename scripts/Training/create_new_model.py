@@ -1,49 +1,54 @@
-### create_new_model.py
-
-# Change version number with each new iteration
-filename = r"genre_classifier_model_vX.Y.keras"
-
-# Where you save your model to
-model_directory = r"path_to_your_model_directory"
-
-
-from tensorflow.keras import Sequential
-from tensorflow.keras.layers import Dense, Dropout, BatchNormalization, Input
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Conv1D, MaxPooling1D, LSTM, Dense, Dropout, Flatten
 import os
 
+# ==============================================================================
+# MODEL CREATION SCRIPT (Subject to change)
+# ==============================================================================
+# This script is my playground to design and compile models in different ways,
+# as it stands, im experimenting with CNN-LTSM Hybrid models.
+#
 
-# Define a function to create a new model
-def create_model():
-    model = Sequential([
-        Input(shape=(32,)),  # Adjust this based on your features
-        Dense(128, activation='relu'),
-        BatchNormalization(),
-        Dropout(0.3),
-        Dense(64, activation='relu'),
-        BatchNormalization(),
-        Dropout(0.3),
-        Dense(32, activation='relu'),
-        Dropout(0.2),
-        Dense(10, activation='softmax')  # 10 output neurons for 10 genres
-    ])
+MODEL_PATH = "genre_classifier_model_v8.0.h5"
 
-    # Compile the model
-    model.compile(
-        optimizer='adam',
-        loss='sparse_categorical_crossentropy',
-        metrics=['accuracy']
-    )
+# Define model parameters
+time_steps = 128  # Example value, adjust as per your input shape
+num_features = 41  # Example value, adjust according to your feature vector size
+num_classes = 23  # Example value, adjust to your number of genres
 
-    print("New model created successfully!")
-    return model
+model = Sequential()
 
+# CNN Layer 1: Extract local features
+model.add(Conv1D(64, 3, activation='relu', input_shape=(time_steps, num_features)))
+model.add(MaxPooling1D(pool_size=2))
 
-# Create a new model
-model = create_model()
+# CNN Layer 2: Further feature extraction
+model.add(Conv1D(128, 3, activation='relu'))
+model.add(MaxPooling1D(pool_size=2))
 
-# Save the new model
-models_dir = model_directory
-os.makedirs(models_dir, exist_ok=True)
-model_path = os.path.join(models_dir, filename)
-model.save(model_path)
-print(f"Model saved successfully at {model_path}")
+# LSTM Layer: Capture temporal dependencies
+model.add(LSTM(128, return_sequences=True))  # return_sequences=True for stacking more LSTMs
+model.add(LSTM(64))  # Reducing the sequence length
+
+# Flatten layer: Convert 2D output to 1D
+model.add(Flatten())
+
+# Dense Layer: For final classification
+model.add(Dense(64, activation='relu'))
+model.add(Dropout(0.5))  # Dropout for regularization
+
+# Output Layer: Multi-class classification
+model.add(Dense(num_classes, activation='softmax'))
+
+# Compile the model
+model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+
+# Print model summary
+model.summary()
+
+# Save the model to a file
+model_save_path = MODEL_PATH
+model.save(model_save_path)
+
+print(f"Model saved to {model_save_path}")
